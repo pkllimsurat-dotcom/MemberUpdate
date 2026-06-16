@@ -90,8 +90,8 @@
     <div class="t-head">
       <span>ลำดับ</span>
       <span>บริษัท / องค์กร</span>
-      <span class="hide-mobile" style="text-align:center;">Line ID ผู้ติดต่อ 1</span>
-      <span class="hide-mobile" style="text-align:center;">Line ID ผู้ติดต่อ 2</span>
+      <span class="hide-mobile" style="text-align:center;">ชื่อไลน์ + ID / เบอร์โทร ผู้ติดต่อ 1</span>
+      <span class="hide-mobile" style="text-align:center;">ชื่อไลน์ + ID / เบอร์โทร ผู้ติดต่อ 2</span>
     </div>
     <div id="rows"></div>
     <div id="noRes">ไม่พบรายชื่อที่ค้นหา</div>
@@ -106,8 +106,8 @@
     </svg>
     </div>
     <div class="qr-info">
-      <div class="qr-title">สแกนเพื่อดูและอัปเดต Line ID</div>
-      <div class="qr-desc">สมาชิกสามารถสแกน QR Code แล้วค้นหาบริษัทของตนเองเพื่อเพิ่ม Line ID ผู้ติดต่อได้ทันที</div>
+      <div class="qr-title">สแกนเพื่อดูและอัปเดตข้อมูลผู้ติดต่อ</div>
+      <div class="qr-desc">สมาชิกสามารถสแกน QR Code แล้วค้นหาบริษัทของตนเองเพื่อเพิ่มชื่อไลน์ + ID หรือเบอร์โทรผู้ติดต่อได้ทันที</div>
       <div class="qr-tag">✏️ แก้ไขได้ทุกคน · บันทึกอัตโนมัติ</div>
     </div>
   </div>
@@ -117,12 +117,12 @@
 <!-- Modal -->
 <div class="modal-bg" id="modalBg">
   <div class="modal">
-    <h3>✏️ แก้ไข Line ID ผู้ติดต่อ</h3>
+    <h3>✏️ แก้ไขข้อมูลผู้ติดต่อ</h3>
     <div class="co-name" id="modalCoName"></div>
-    <label>Line ID ผู้ติดต่อคนที่ 1</label>
-    <input type="text" id="line1Input" placeholder="เช่น @john.doe หรือ johndoe">
-    <label>Line ID ผู้ติดต่อคนที่ 2</label>
-    <input type="text" id="line2Input" placeholder="เช่น @jane.doe หรือ janedoe">
+    <label>ชื่อไลน์ + ID / เบอร์โทร ผู้ติดต่อ 1</label>
+    <input type="text" id="line1Input" placeholder="เช่น สมชาย @somchai หรือ 081-234-5678">
+    <label>ชื่อไลน์ + ID / เบอร์โทร ผู้ติดต่อ 2</label>
+    <input type="text" id="line2Input" placeholder="เช่น สมหญิง @somying หรือ 089-876-5432">
     <p class="modal-hint">ข้อมูลจะถูกบันทึกและแสดงต่อสมาชิกทุกคนทันที</p>
     <div class="modal-actions">
       <span class="saving-badge" id="savingBadge">กำลังบันทึก...</span>
