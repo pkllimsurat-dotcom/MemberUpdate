@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>รายชื่อสมาชิก ชมรมอุตสาหกรรมบางปู</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Sarabun',sans-serif;background:#F4F7FB;min-height:100vh;}
+  .container{max-width:900px;margin:0 auto;padding:2rem 1rem 3rem;}
+  .header{text-align:center;margin-bottom:2rem;}
+  .badge{display:inline-flex;align-items:center;gap:8px;background:#1B3A5C;color:#fff;font-size:12px;font-weight:500;letter-spacing:.07em;padding:6px 18px;border-radius:20px;margin-bottom:14px;text-transform:uppercase;}
+  .title{font-size:26px;font-weight:600;color:#1B3A5C;line-height:1.35;margin-bottom:6px;}
+  .sub{font-size:14px;color:#6a8ba8;}
+  .date-pill{display:inline-block;margin-top:10px;background:#fff;border:0.5px solid #C5D9EC;color:#1B3A5C;font-size:13px;padding:5px 16px;border-radius:14px;font-weight:500;}
+  hr.div{border:none;border-top:2px solid #1B3A5C;margin:1.5rem 0;}
+  .controls{display:flex;align-items:center;gap:10px;margin-bottom:1.2rem;flex-wrap:wrap;}
+  .count-chip{flex-shrink:0;background:#fff;border:0.5px solid #C5D9EC;border-radius:8px;padding:8px 18px;font-size:13px;color:#1B3A5C;font-weight:500;white-space:nowrap;}
+  .search-wrap{flex:1;min-width:200px;}
+  .search-wrap input{width:100%;padding:9px 14px;border:0.5px solid #C5D9EC;border-radius:8px;font-size:14px;font-family:'Sarabun',sans-serif;color:#1B3A5C;background:#fff;outline:none;transition:box-shadow .15s,border-color .15s;}
+  .search-wrap input:focus{border-color:#1B3A5C;box-shadow:0 0 0 3px rgba(27,58,92,.1);}
+  .table-box{background:#fff;border-radius:14px;overflow:hidden;border:0.5px solid #C8DAEA;box-shadow:0 2px 12px rgba(27,58,92,.06);}
+  .t-head{display:grid;grid-template-columns:50px 1fr 160px 160px;background:#1B3A5C;padding:12px 20px;gap:8px;}
+  .t-head span{font-size:11px;font-weight:500;color:rgba(255,255,255,.65);letter-spacing:.08em;text-transform:uppercase;}
+  .t-row{display:grid;grid-template-columns:50px 1fr 160px 160px;padding:10px 20px;border-bottom:0.5px solid #EDF3F8;align-items:center;gap:8px;transition:background .12s;}
+  .t-row:last-child{border-bottom:none;}
+  .t-row.alt{background:#FAFCFE;}
+  .t-row:hover{background:#EEF6FF;}
+  .num{font-size:12px;color:#8FAEC5;font-weight:500;}
+  .co{font-size:13.5px;color:#1B3A5C;line-height:1.4;}
+  .line-cell{display:flex;align-items:center;gap:6px;}
+  .line-id{font-size:13px;color:#1B3A5C;font-weight:500;}
+  .line-empty{font-size:12px;color:#b0bec5;font-style:italic;}
+  .edit-btn{background:none;border:0.5px solid #C5D9EC;border-radius:6px;padding:3px 8px;font-size:11px;font-family:'Sarabun',sans-serif;color:#1B3A5C;cursor:pointer;white-space:nowrap;transition:all .15s;flex-shrink:0;}
+  .edit-btn:hover{background:#1B3A5C;color:#fff;border-color:#1B3A5C;}
+  #noRes{display:none;text-align:center;padding:2.5rem;color:#9BB3C6;font-size:14px;}
+
+  /* Modal */
+  .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:100;align-items:center;justify-content:center;}
+  .modal-bg.open{display:flex;}
+  .modal{background:#fff;border-radius:16px;padding:2rem;width:90%;max-width:440px;box-shadow:0 8px 40px rgba(0,0,0,.18);}
+  .modal h3{font-size:16px;font-weight:600;color:#1B3A5C;margin-bottom:4px;}
+  .modal .co-name{font-size:13px;color:#6a8ba8;margin-bottom:1.4rem;line-height:1.5;}
+  .modal label{display:block;font-size:12px;font-weight:500;color:#1B3A5C;margin-bottom:4px;letter-spacing:.04em;}
+  .modal input[type=text]{width:100%;padding:9px 12px;border:0.5px solid #C5D9EC;border-radius:8px;font-size:14px;font-family:'Sarabun',sans-serif;color:#1B3A5C;outline:none;margin-bottom:1rem;transition:border-color .15s,box-shadow .15s;}
+  .modal input[type=text]:focus{border-color:#1B3A5C;box-shadow:0 0 0 3px rgba(27,58,92,.1);}
+  .modal-hint{font-size:12px;color:#9BB3C6;margin-bottom:1.4rem;margin-top:-8px;}
+  .modal-actions{display:flex;gap:10px;justify-content:flex-end;}
+  .btn-cancel{background:#fff;border:0.5px solid #C5D9EC;border-radius:8px;padding:8px 20px;font-size:13px;font-family:'Sarabun',sans-serif;color:#6a8ba8;cursor:pointer;transition:all .15s;}
+  .btn-cancel:hover{background:#F4F7FB;}
+  .btn-save{background:#1B3A5C;border:none;border-radius:8px;padding:8px 20px;font-size:13px;font-family:'Sarabun',sans-serif;color:#fff;cursor:pointer;font-weight:500;transition:all .15s;}
+  .btn-save:hover{background:#142d47;}
+  .btn-save:disabled{background:#9BB3C6;cursor:not-allowed;}
+
+  .saving-badge{display:none;font-size:12px;color:#9BB3C6;margin-right:auto;align-self:center;}
+  .status-bar{text-align:center;padding:8px;font-size:12px;color:#9BB3C6;border-top:0.5px solid #EDF3F8;}
+
+  .qr-section{margin-top:2rem;padding:1.4rem 1.6rem;background:#fff;border:0.5px solid #C8DAEA;border-radius:14px;box-shadow:0 2px 12px rgba(27,58,92,.06);display:flex;gap:1.6rem;align-items:center;flex-wrap:wrap;}
+  .qr-svg-wrap{flex-shrink:0;background:#fff;border-radius:10px;padding:10px;border:0.5px solid #C8DAEA;}
+  .qr-info .qr-title{font-size:15px;font-weight:600;color:#1B3A5C;margin-bottom:6px;}
+  .qr-info .qr-desc{font-size:13px;color:#4a6a8a;line-height:1.75;}
+  .qr-tag{display:inline-flex;align-items:center;gap:6px;margin-top:12px;background:#E6F4EC;color:#196D31;font-size:12px;font-weight:500;padding:5px 14px;border-radius:12px;}
+  .footer{text-align:center;margin-top:1.5rem;font-size:12px;color:#b0bec5;}
+
+  @media(max-width:640px){
+    .t-head,.t-row{grid-template-columns:36px 1fr;gap:4px;}
+    .t-head .hide-mobile,.t-row .hide-mobile{display:none;}
+    .title{font-size:20px;}
+    .qr-section{flex-direction:column;}
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="badge">🏭 ชมรมอุตสาหกรรมบางปู</div>
+    <div class="title">รายชื่อสมาชิก<br>ชมรมอุตสาหกรรมบางปู</div>
+    <div class="sub">เรียงตามชื่อบริษัท</div>
+    <div class="date-pill">ณ วันที่ 15 มิถุนายน 2569</div>
+  </div>
+  <hr class="div">
+  <div class="controls">
+    <div class="count-chip">สมาชิกทั้งหมด <strong>91</strong> ราย</div>
+    <div class="search-wrap">
+      <input type="text" id="searchInput" placeholder="🔍  ค้นหาชื่อบริษัท..." oninput="doFilter()">
+    </div>
+  </div>
+  <div class="table-box">
+    <div class="t-head">
+      <span>ลำดับ</span>
+      <span>บริษัท / องค์กร</span>
+      <span class="hide-mobile" style="text-align:center;">Line ID ผู้ติดต่อ 1</span>
+      <span class="hide-mobile" style="text-align:center;">Line ID ผู้ติดต่อ 2</span>
+    </div>
+    <div id="rows"></div>
+    <div id="noRes">ไม่พบรายชื่อที่ค้นหา</div>
+    <div class="status-bar" id="statusBar">⏳ กำลังโหลดข้อมูล...</div>
+  </div>
+
+  <div class="qr-section">
+    <div class="qr-svg-wrap">
+      <svg id="qrsvg" width="130" height="130" viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+    <div class="qr-info">
+      <div class="qr-title">สแกนเพื่อดูและอัปเดต Line ID</div>
+      <div class="qr-desc">สมาชิกสามารถสแกน QR Code แล้วค้นหาบริษัทของตนเองเพื่อเพิ่ม Line ID ผู้ติดต่อได้ทันที</div>
+      <div class="qr-tag">✏️ แก้ไขได้ทุกคน · บันทึกอัตโนมัติ</div>
+    </div>
+  </div>
+  <div class="footer">ข้อมูล ณ วันที่ 15 มิถุนายน 2569 · ชมรมอุตสาหกรรมบางปู</div>
+</div>
+
+<!-- Modal -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal">
+    <h3>✏️ แก้ไข Line ID ผู้ติดต่อ</h3>
+    <div class="co-name" id="modalCoName"></div>
+    <label>Line ID ผู้ติดต่อคนที่ 1</label>
+    <input type="text" id="line1Input" placeholder="เช่น @john.doe หรือ johndoe">
+    <label>Line ID ผู้ติดต่อคนที่ 2</label>
+    <input type="text" id="line2Input" placeholder="เช่น @jane.doe หรือ janedoe">
+    <p class="modal-hint">ข้อมูลจะถูกบันทึกและแสดงต่อสมาชิกทุกคนทันที</p>
+    <div class="modal-actions">
+      <span class="saving-badge" id="savingBadge">กำลังบันทึก...</span>
+      <button class="btn-cancel" onclick="closeModal()">ยกเลิก</button>
+      <button class="btn-save" id="btnSave" onclick="saveLineIds()">บันทึก</button>
+    </div>
+  </div>
+</div>
+
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBAtC1yDIxSonS183_G1ftw1evoL9JOFD4",
+  authDomain: "memberupdate-76635.firebaseapp.com",
+  databaseURL: "https://memberupdate-76635-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "memberupdate-76635",
+  storageBucket: "memberupdate-76635.appspot.com",
+  messagingSenderId: "memberupdate-76635",
+  appId: "memberupdate-76635"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const members = [
+  [1,"บริษัท กลุ่มสยามบรรจุภัณฑ์อุตสาหกรรม จำกัด"],
+  [2,"บริษัท โกลบอล ยูทิลิตี้ เซอร์วิส จำกัด"],
+  [3,"บริษัท โกลบอล เอ็นไวรอนเมนทอล เทคโนโลยี จำกัด"],
+  [4,"บริษัท โกลเบิล เคมีเคิล จำกัด"],
+  [5,"บริษัท คาลบี้ธนาวัธน์ จำกัด"],
+  [6,"บริษัท เคทีเค.97 ซับคอนแทรคเตอร์ จำกัด"],
+  [7,"บริษัท เคมแฟค จำกัด"],
+  [8,"บริษัท จีพีวี เอเชีย (ประเทศไทย) จำกัด"],
+  [9,"บริษัท เจพีไทย อาซาฮี อิเล็กทรอนิกส์ จำกัด"],
+  [10,"บริษัท ซันสตาร์ เคมีคัล (ประเทศไทย) จำกัด"],
+  [11,"บริษัท ซันสตาร์ เอ็นจิเนียริ่ง (ประเทศไทย) จำกัด"],
+  [12,"บริษัท ซูมิโตโม อิเล็คตริก วินเทค (ประเทศไทย) จำกัด"],
+  [13,"บริษัท เซ้าท์อีสต์เอเชี่ยน แพคเกจจิ่ง แอนด์ แคนนิ่ง จำกัด"],
+  [14,"บริษัท เดลต้า อีเลคโทรนิคส์ (ประเทศไทย) จำกัด (มหาชน)"],
+  [15,"บริษัท ไดอะโฆรม เคมีเคิล จำกัด"],
+  [16,"บริษัท ตะวันนาบรรจุภัณฑ์ จำกัด"],
+  [17,"บริษัท ตะวันออก ซินเทค จำกัด"],
+  [18,"บริษัท ถิรไทย จำกัด (มหาชน)"],
+  [19,"บริษัท ทีโรลิท โอลิมปัส จำกัด"],
+  [20,"บริษัท ที เอฟ ซี พลาสเทค จำกัด"],
+  [21,"บริษัท ไทย โกเบลโก้ เวลดิ้ง จำกัด"],
+  [22,"บริษัท ไทยเซเซน จำกัด"],
+  [23,"บริษัท ไทยนิสชิน เซฟุง จำกัด"],
+  [24,"บริษัท ไทยนิสชิน เทคโนมิค จำกัด"],
+  [25,"บริษัท ไทยปาร์คเกอร์ไรซิ่ง จำกัด"],
+  [26,"บริษัท ไทยฟิน จำกัด"],
+  [27,"บริษัท ไทยอินเตอร์เนชั่นแนล ไดเมคกิ้ง จำกัด"],
+  [28,"บริษัท ไทรอัมพ์ทรี จำกัด"],
+  [29,"บริษัท ไทยรีฟิรเจอเรชั่น คอมโพเน้นท์ จำกัด"],
+  [30,"บริษัท ไทยเอ็นเนอร์จี สโตเรจ เทคโนโลยี จำกัด (มหาชน)"],
+  [31,"บริษัท นาสโตะ (ประเทศไทย) จำกัด"],
+  [32,"บริษัท นิกโก คอร์ปอเรชั่น (ประเทศไทย) จำกัด"],
+  [33,"บริษัท บางปูเคมีเคิลส์ จำกัด"],
+  [34,"บริษัท บีเอเอสเอฟ (ไทย) จำกัด"],
+  [35,"บริษัท บี เอ็ม ที เอเชีย จำกัด"],
+  [36,"บริษัท ไบโอแลป จำกัด"],
+  [37,"บริษัท พาราเคมีภัณฑ์ จำกัด"],
+  [38,"บริษัท ฟูจิทัสโก้ จำกัด"],
+  [39,"บริษัท เฟลตัลอุตสาหกรรม จำกัด"],
+  [40,"บริษัท มัตซุย (เอเซีย) จำกัด"],
+  [41,"บริษัท มูราคามิ แอมพาส (ประเทศไทย) จำกัด"],
+  [42,"บริษัท เมก้าไลฟ์ไซแอนซ์ จำกัด (มหาชน)"],
+  [43,"บริษัท แมทเทล กรุงเทพ จำกัด"],
+  [44,"บริษัท ล่ำสูง (ประเทศไทย) จำกัด (มหาชน)"],
+  [45,"บริษัท วิวเทค เอเชีย จำกัด"],
+  [46,"บริษัท วิโนอา (ไทยแลนด์) จำกัด"],
+  [47,"บริษัท ศรีไทย มิยากาวา จำกัด"],
+  [48,"บริษัท ศรีไทยซุปเปอร์แวร์ จำกัด (มหาชน) สาขาบางปู"],
+  [49,"บริษัท ศรีไทยเดลี่ฟู้ดส์ จำกัด"],
+  [50,"สถาบันวิจัยวิทยาศาสตร์และเทคโนโลยี"],
+  [51,"บริษัท สยาม พีวีเอส เคมีคอลส์ จำกัด"],
+  [52,"บริษัท สยามทบพันแพคเกจจิ่ง จำกัด"],
+  [53,"บริษัท สาลี่คัลเล่อร์ จำกัด (มหาชน)"],
+  [54,"บริษัท หวาเหลี่ยง เซรามิค ฮาร์ดแวร์ แฟคโทรี่ จำกัด"],
+  [55,"บริษัท อมาล์เลียน เอ็นเตอร์ไพรส์ (ไทยแลนด์) จำกัด"],
+  [56,"บริษัท อิโต้ (ประเทศไทย) จำกัด"],
+  [57,"บริษัท อินฟุส เมดิคัล (ประเทศไทย) จำกัด"],
+  [58,"บริษัท อินเตอร์พรีทีฟ จำกัด"],
+  [59,"บริษัท อุตสาหกรรมกรดมะนาว จำกัด"],
+  [60,"บริษัท อูเอโน ไฟน์ เคมีคัลส์ อินดัสตรี (ประเทศไทย) จำกัด"],
+  [61,"บริษัท เอเซียไฟเบอร์ จำกัด (มหาชน)"],
+  [62,"บริษัท เอ็น เอช เค พรีซิชั่น (ประเทศไทย) จำกัด"],
+  [63,"บริษัท เอ็น เอช เค สปริง (ประเทศไทย) จำกัด"],
+  [64,"บริษัท เอ็ม.ซี.พลาสติก จำกัด"],
+  [65,"บริษัท แอ็พพลาย ดีบี จำกัด (มหาชน)"],
+  [66,"บริษัท แอมพาส อินดัสตรี จำกัด"],
+  [67,"บริษัท โอเชียนกลาส จำกัด (มหาชน)"],
+  [68,"บริษัท ไอ เอ ซี ซี เคมิคอล โซลูชั่นส์ จำกัด"],
+  [69,"บริษัท ไอ.พี.วัน จำกัด"],
+  [70,"บริษัท แอล ดี เอส เมทัล เวิร์ค จำกัด"],
+  [71,"บริษัท ฮะฮงสตีล จำกัด"],
+  [72,"บริษัท นิวบางปู แมนิวแฟคเจอริ่ง จำกัด"],
+  [73,"บริษัท ทีเอส โมลิเมอร์ จำกัด"],
+  [74,"บริษัท เอดีบี ซีแลนด์ จำกัด"],
+  [75,"บริษัท จินเป่า พรีซิชั่น อินดัสทรี่ จำกัด (สำนักงานใหญ่)"],
+  [76,"บริษัท จินเป่า พรีซิชั่น อินดัสทรี่ จำกัด (โรงงาน)"],
+  [77,"บริษัท สแตนดาร์ด แมนูแฟคเจอริ่ง จำกัด"],
+  [78,"บริษัท เนสท์เล่ ประเทศไทย จำกัด"],
+  [79,"บริษัท ศมลวรรณรุ่งเรืองกิจ จำกัด"],
+  [80,"บริษัท วีก้า บอลล์ แมนนูแฟคเจอริ่ง จำกัด"],
+  [81,"บริษัท เกรียงไกรรีไซเคิล จำกัด"],
+  [82,"โรงพยาบาลเปาโลสมุทรปราการ"],
+  [83,"บริษัท สมุทรเวชกิจ จำกัด"],
+  [84,"บริษัท ศิครินทร์ จำกัด (มหาชน)"],
+  [85,"บริษัท ดีไอซี สยามเคมีคอลอินดัสตรี้ จำกัด"],
+  [86,"บริษัท วินแชนซ์ อินดัสตรีส์ จำกัด"],
+  [87,"บริษัท เพ็ท ทรีทส์ จำกัด"],
+  [88,"บริษัท บียอนด์ เอจ จำกัด"],
+  [89,"บริษัท เคซีอี อีเลคโทรนิคส์ จำกัด (มหาชน)"],
+  [90,"บริษัท เอดีอี โซลูชั่น จำกัด"],
+  [91,"บริษัท มัลติเทค ฟู๊ด แมนูแฟคเจอริ่ง จำกัด"]
+];
+
+let lineData = {};
+let currentEditNum = null;
+
+const dbRef = ref(db, 'lineids');
+
+onValue(dbRef, (snapshot) => {
+  lineData = snapshot.val() || {};
+  document.getElementById('statusBar').style.display = 'none';
+  doFilter();
+});
+
+function mkKey(num) { return 'm' + num; }
+
+window.openModal = function(num) {
+  currentEditNum = num;
+  const member = members.find(m => m[0] === num);
+  document.getElementById('modalCoName').textContent = member[1];
+  const data = lineData[mkKey(num)] || {};
+  document.getElementById('line1Input').value = data.line1 || '';
+  document.getElementById('line2Input').value = data.line2 || '';
+  document.getElementById('modalBg').classList.add('open');
+  document.getElementById('line1Input').focus();
+};
+
+window.closeModal = function() {
+  document.getElementById('modalBg').classList.remove('open');
+  currentEditNum = null;
+};
+
+window.saveLineIds = async function() {
+  if (!currentEditNum) return;
+  const btn = document.getElementById('btnSave');
+  const badge = document.getElementById('savingBadge');
+  btn.disabled = true;
+  badge.style.display = 'inline';
+  const line1 = document.getElementById('line1Input').value.trim();
+  const line2 = document.getElementById('line2Input').value.trim();
+  try {
+    await update(ref(db, 'lineids/' + mkKey(currentEditNum)), { line1, line2 });
+    closeModal();
+  } catch(e) {
+    alert('เกิดข้อผิดพลาด: ' + e.message);
+  }
+  btn.disabled = false;
+  badge.style.display = 'none';
+};
+
+document.getElementById('modalBg').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeModal();
+});
+
+function lineCell(num, field, label) {
+  const data = lineData[mkKey(num)] || {};
+  const val = data[field] || '';
+  if (val) return `<span class="line-id">@${val.replace(/^@/,'')}</span>`;
+  return `<span class="line-empty">—</span>`;
+}
+
+function render(list) {
+  const c = document.getElementById('rows');
+  const nr = document.getElementById('noRes');
+  if (!list.length) { c.innerHTML = ''; nr.style.display = 'block'; return; }
+  nr.style.display = 'none';
+  c.innerHTML = list.map(([n, name], i) => `
+    <div class="t-row${i%2===1?' alt':''}">
+      <span class="num">${String(n).padStart(2,'0')}</span>
+      <span class="co">
+        ${name}
+        <button class="edit-btn" onclick="openModal(${n})">✏️ แก้ไข</button>
+      </span>
+      <span class="hide-mobile" style="text-align:center;">${lineCell(n,'line1')}</span>
+      <span class="hide-mobile" style="text-align:center;">${lineCell(n,'line2')}</span>
+    </div>`).join('');
+}
+
+window.doFilter = function() {
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  render(q ? members.filter(([,name]) => name.toLowerCase().includes(q)) : members);
+};
+
+doFilter();
+
+// QR Code
+const M=[[1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,0,1,1,1,1,1,0,0,1,0,0,1,1,1,1,1,1,1],[1,0,0,0,0,0,1,0,0,1,0,0,1,1,1,1,1,1,0,0,0,1,1,0,0,0,1,0,0,0,0,0,1],[1,0,1,1,1,0,1,0,1,0,0,1,0,1,0,1,0,1,1,0,1,1,1,0,1,0,1,0,1,1,1,0,1],[1,0,1,1,1,0,1,0,1,1,1,0,1,0,1,0,1,0,0,0,0,0,1,1,1,0,1,0,1,1,1,0,1],[1,0,1,1,1,0,1,0,1,1,0,1,1,0,0,1,0,1,1,0,0,0,0,1,0,0,1,0,1,1,1,0,1],[1,0,0,0,0,0,1,0,1,0,1,0,1,0,1,1,1,1,0,0,1,1,1,0,0,0,1,0,0,0,0,0,1],[1,1,1,1,1,1,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,1,1,1,1,1,1],[0,0,0,0,0,0,0,0,1,1,0,1,1,0,0,1,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0],[1,0,1,1,1,1,1,0,0,1,1,0,0,1,1,1,0,1,0,1,0,0,1,1,1,0,1,1,1,1,1,0,0],[1,0,1,0,0,1,0,0,1,1,0,0,1,0,0,0,1,0,0,1,1,1,1,1,0,0,1,1,0,1,1,0,1],[0,0,1,0,0,0,1,0,0,1,0,1,1,0,0,1,1,0,1,0,1,1,1,0,1,0,0,0,1,0,1,0,0],[1,1,1,0,0,0,0,0,1,0,0,1,1,0,1,0,1,0,0,0,1,1,1,0,0,1,0,0,1,1,1,0,1],[0,0,1,0,1,1,1,1,1,1,0,1,0,0,0,1,0,0,1,1,0,0,1,1,1,1,0,1,1,1,0,0,0],[0,0,0,0,1,0,0,1,0,1,0,1,1,0,1,1,1,0,0,1,0,1,0,1,1,0,1,0,0,1,0,1,1],[0,0,0,1,1,1,1,1,0,0,1,1,1,0,0,0,0,0,0,0,1,0,0,0,0,1,1,1,1,0,0,1,0],[1,0,0,0,1,1,0,1,0,1,0,1,0,0,1,0,1,0,1,1,0,1,1,0,0,1,1,1,0,1,1,0,0],[1,1,1,1,0,1,1,1,1,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,1,1,0,1,1,0,0,0,1],[1,0,1,0,0,1,0,0,0,1,0,1,0,1,1,0,1,1,1,1,0,0,1,1,0,1,1,1,0,1,1,0,1],[0,0,1,0,1,1,1,1,1,0,0,1,1,1,0,1,0,1,0,0,0,1,1,0,1,1,1,1,1,0,1,1,0],[0,1,0,1,0,1,0,1,0,0,1,1,0,0,0,0,1,1,1,0,1,1,1,0,0,0,1,1,1,1,1,1,0],[0,0,1,0,1,1,1,1,0,1,0,1,1,0,0,0,1,0,0,0,1,0,1,1,0,1,0,1,1,1,0,1,0],[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,0,1,1,1,1,0,1,0,0,1,0,0,0,0,0,1],[1,0,0,0,1,1,1,1,1,0,1,0,1,0,1,1,1,1,1,0,0,1,1,0,1,0,0,0,1,1,1,1,0],[1,0,1,0,0,0,0,1,0,1,0,0,1,0,1,1,0,0,0,1,0,1,1,0,1,0,0,0,1,1,1,0,0],[1,0,0,1,0,0,1,1,1,0,1,1,0,1,1,1,0,1,0,0,1,0,1,0,1,1,1,1,1,0,0,1,0],[0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,1,1,1,1,1,0,1,0,0,0,1,0,1,1,1],[1,1,1,1,1,1,1,0,0,0,0,1,1,0,0,1,1,0,1,0,1,0,0,1,1,0,1,0,1,0,1,1,0],[1,0,0,0,0,0,1,0,1,0,1,1,0,1,1,1,1,0,0,0,0,1,0,1,1,0,0,0,1,1,1,0,0],[1,0,1,1,1,0,1,0,1,1,1,1,1,0,0,0,0,0,1,0,1,0,1,0,1,1,1,1,1,1,0,0,1],[1,0,1,1,1,0,1,0,1,1,1,0,0,1,1,1,1,1,0,1,1,1,0,1,0,1,0,0,1,1,0,1,1],[1,0,1,1,1,0,1,0,1,1,0,0,0,0,1,0,0,1,0,0,1,0,0,0,0,0,1,1,0,1,0,0,0],[1,0,0,0,0,0,1,0,0,0,1,1,1,0,1,0,1,0,0,0,1,1,0,1,0,1,0,0,1,0,1,0,0],[1,1,1,1,1,1,1,0,1,0,1,1,0,0,0,0,0,1,0,0,0,0,1,1,1,1,1,1,0,0,0,1,0]];
+const svg=document.getElementById('qrsvg');
+const sz=M.length,cell=130/sz;
+let r='<rect width="130" height="130" fill="white"/>';
+for(let i=0;i<sz;i++)for(let j=0;j<sz;j++)if(M[i][j])r+=`<rect x="${(j*cell).toFixed(2)}" y="${(i*cell).toFixed(2)}" width="${(cell+0.5).toFixed(2)}" height="${(cell+0.5).toFixed(2)}" fill="#1B3A5C"/>`;
+svg.innerHTML=r;
+
+</script>
+</body>
+</html>
