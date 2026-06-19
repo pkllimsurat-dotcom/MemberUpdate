@@ -1,0 +1,562 @@
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>สุ่มผู้โชคดี | ชมรมอุตสาหกรรมบางปู</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700;800&family=Baloo+2:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    font-family:'Sarabun',sans-serif;
+    min-height:100vh;
+    background: linear-gradient(125deg, #FF3CAC 0%, #FF8A5B 22%, #FFE259 45%, #2ED9A3 68%, #2E9FFF 100%);
+    background-size: 300% 300%;
+    animation: bgShift 10s ease infinite;
+    overflow-x:hidden;
+    position:relative;
+  }
+  @keyframes bgShift{
+    0%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+    100%{background-position:0% 50%;}
+  }
+  .confetti{position:fixed;top:-20px;width:10px;height:10px;opacity:0.95;z-index:5;pointer-events:none;border-radius:3px;}
+  .sparkle-bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+  .sparkle{position:absolute;font-size:22px;opacity:0.5;animation:floatSparkle 6s ease-in-out infinite;}
+  @keyframes floatSparkle{
+    0%,100%{transform:translateY(0) rotate(0deg);}
+    50%{transform:translateY(-25px) rotate(15deg);}
+  }
+  .container{position:relative;z-index:2;max-width:920px;margin:0 auto;padding:2.2rem 1.5rem 3.5rem;text-align:center;}
+
+  .header{margin-bottom:1.2rem;}
+  .badge{
+    display:inline-flex;align-items:center;gap:8px;
+    background:rgba(255,255,255,0.97);
+    color:#FF3CAC;font-size:14px;font-weight:700;letter-spacing:.05em;
+    padding:9px 26px;border-radius:30px;margin-bottom:16px;
+    box-shadow:0 6px 24px rgba(0,0,0,0.18);
+  }
+  .title{
+    font-family:'Baloo 2', sans-serif;
+    font-size:50px;font-weight:800;color:#fff;line-height:1.2;
+    text-shadow: 0 4px 0 rgba(0,0,0,0.12), 0 8px 30px rgba(0,0,0,0.25);
+    margin-bottom:8px;
+    letter-spacing:.01em;
+  }
+  .title .em{
+    background:linear-gradient(135deg,#FFE259,#FF8A5B);
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+    filter:drop-shadow(0 4px 10px rgba(0,0,0,0.2));
+  }
+  .sub{font-size:16px;color:rgba(255,255,255,0.97);font-weight:600;text-shadow:0 2px 10px rgba(0,0,0,0.2);}
+
+  .stage{
+    background:rgba(255,255,255,0.98);
+    border-radius:32px;
+    padding:2.8rem 2.2rem;
+    margin:1.8rem 0;
+    box-shadow:0 25px 70px rgba(0,0,0,0.28);
+    position:relative;
+    overflow:hidden;
+    border:5px solid rgba(255,255,255,0.6);
+  }
+  .stage::before{
+    content:'';position:absolute;top:-60%;left:-60%;width:220%;height:220%;
+    background:conic-gradient(from 0deg, rgba(255,60,172,0.06), rgba(255,226,89,0.06), rgba(46,217,163,0.06), rgba(46,159,255,0.06), rgba(255,60,172,0.06));
+    animation:rotateBg 20s linear infinite;
+  }
+  @keyframes rotateBg{ from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
+
+  .count-info{
+    display:flex;justify-content:center;gap:12px;margin-bottom:2rem;flex-wrap:wrap;position:relative;z-index:1;
+  }
+  .info-chip{
+    background:linear-gradient(135deg, #EAF6FF, #F4F7FB);border:2px solid #BFE3FF;border-radius:18px;
+    padding:11px 24px;font-size:14.5px;font-weight:700;color:#1B3A5C;
+    box-shadow:0 4px 12px rgba(46,159,255,0.12);
+  }
+  .info-chip.warn{background:linear-gradient(135deg,#FFF3E0,#FFE8CC);border-color:#FFC36B;color:#E65100;}
+
+  .reel-wrap{
+    position:relative;height:190px;display:flex;align-items:center;justify-content:center;
+    margin-bottom:1.8rem;z-index:1;
+  }
+  .reel-mask{
+    width:100%;max-width:640px;height:178px;
+    border-radius:24px;
+    background:linear-gradient(180deg, #2A1B5C 0%, #5C2A8F 50%, #2A1B5C 100%);
+    overflow:hidden;position:relative;
+    box-shadow: inset 0 0 50px rgba(0,0,0,0.35), 0 14px 45px rgba(91,40,143,0.4);
+    border: 5px solid #FFE259;
+  }
+  .reel-mask::before, .reel-mask::after{
+    content:'';position:absolute;left:0;right:0;height:64px;z-index:3;pointer-events:none;
+  }
+  .reel-mask::before{top:0;background:linear-gradient(180deg, rgba(42,27,92,0.97), transparent);}
+  .reel-mask::after{bottom:0;background:linear-gradient(0deg, rgba(42,27,92,0.97), transparent);}
+  .reel-center-line{
+    position:absolute;top:50%;left:0;right:0;height:58px;transform:translateY(-50%);
+    border-top:3px dashed rgba(255,226,89,0.75);border-bottom:3px dashed rgba(255,226,89,0.75);
+    z-index:2;pointer-events:none;
+    box-shadow:0 0 18px rgba(255,226,89,0.3);
+  }
+  #reelTrack{
+    position:absolute;top:0;left:0;width:100%;
+    display:flex;flex-direction:column;align-items:center;
+    will-change: transform;
+  }
+  .reel-item{
+    height:64px;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:0 20px;text-align:center;flex-shrink:0;
+  }
+  .reel-item .r-name{font-size:18px;font-weight:700;color:#fff;line-height:1.25;}
+  .reel-item .r-line{font-size:12.5px;font-weight:500;color:#FFE259;margin-top:2px;}
+
+  .result-card{
+    display:none;
+    background:linear-gradient(135deg, #FFE259 0%, #FF8A5B 50%, #FF3CAC 100%);
+    border-radius:28px;padding:2.6rem 2rem;margin-bottom:1rem;
+    box-shadow:0 18px 55px rgba(255,60,172,0.45);
+    position:relative;z-index:1;
+    border:4px solid rgba(255,255,255,0.6);
+  }
+  .result-card.show{display:block;animation:popIn 0.65s cubic-bezier(.34,1.56,.64,1);}
+  @keyframes popIn{0%{transform:scale(0.3) rotate(-8deg);opacity:0;}60%{transform:scale(1.08) rotate(2deg);}100%{transform:scale(1) rotate(0deg);opacity:1;}}
+  .result-label{font-size:15px;font-weight:800;color:rgba(255,255,255,0.95);letter-spacing:.12em;margin-bottom:8px;text-transform:uppercase;}
+  .result-name{font-size:28px;font-weight:800;color:#fff;line-height:1.3;text-shadow:0 4px 15px rgba(0,0,0,0.22);margin-bottom:10px;}
+  .result-line{
+    display:inline-flex;align-items:center;gap:8px;
+    background:rgba(255,255,255,0.92);color:#1B3A5C;font-weight:700;font-size:18px;
+    padding:10px 24px;border-radius:30px;box-shadow:0 6px 18px rgba(0,0,0,0.15);
+  }
+  .result-trophy{font-size:60px;margin-bottom:10px;filter:drop-shadow(0 6px 14px rgba(0,0,0,0.25));}
+
+  .controls{display:flex;justify-content:center;gap:16px;margin-top:1.5rem;flex-wrap:wrap;position:relative;z-index:1;}
+  .btn-spin{
+    background:linear-gradient(135deg, #FF3CAC, #FF8A5B);
+    color:#fff;border:none;border-radius:50px;
+    padding:19px 60px;font-size:21px;font-weight:800;font-family:'Sarabun',sans-serif;
+    cursor:pointer;box-shadow:0 10px 28px rgba(255,60,172,0.5);
+    transition:transform .15s, box-shadow .15s;
+    letter-spacing:.02em;
+  }
+  .btn-spin:hover:not(:disabled){transform:translateY(-3px) scale(1.04);box-shadow:0 14px 36px rgba(255,60,172,0.6);}
+  .btn-spin:active:not(:disabled){transform:scale(0.97);}
+  .btn-spin:disabled{background:#D8E3EE;color:#9BB3C6;cursor:not-allowed;box-shadow:none;}
+  .btn-reset{
+    background:linear-gradient(135deg, #2ED9A3, #2E9FFF);color:#fff;border:none;border-radius:50px;
+    padding:19px 38px;font-size:16px;font-weight:700;font-family:'Sarabun',sans-serif;
+    cursor:pointer;transition:all .15s;display:none;
+    box-shadow:0 8px 22px rgba(46,159,255,0.35);
+  }
+  .btn-reset.show{display:inline-block;}
+  .btn-reset:hover{transform:translateY(-2px) scale(1.03);}
+
+  .timer-display{
+    font-size:16px;font-weight:700;color:#fff;margin-top:1rem;
+    background:linear-gradient(135deg,#FF3CAC,#FF8A5B);display:inline-block;padding:10px 26px;border-radius:16px;
+    display:none;box-shadow:0 6px 18px rgba(255,60,172,0.35);
+  }
+  .timer-display.show{display:inline-block;}
+
+  .footer{margin-top:2.2rem;font-size:13px;color:rgba(255,255,255,0.9);text-shadow:0 1px 6px rgba(0,0,0,0.2);position:relative;z-index:1;}
+
+  @media(max-width:560px){
+    .title{font-size:34px;}
+    .stage{padding:2rem 1.2rem;}
+    .reel-item .r-name{font-size:15px;}
+    .reel-item .r-line{font-size:11px;}
+    .result-name{font-size:21px;}
+    .result-line{font-size:15px;padding:8px 18px;}
+    .btn-spin{padding:17px 42px;font-size:18px;}
+  }
+</style>
+</head>
+<body>
+<div class="sparkle-bg" id="sparkleBg"></div>
+<div id="confettiLayer"></div>
+<div class="container">
+  <div class="header">
+    <div class="badge">🎉 ชมรมอุตสาหกรรมบางปู</div>
+    <div class="title">สุ่มผู้โชคดี<br><span class="em">รับรางวัล</span> 🎁</div>
+    <div class="sub">กิจกรรมพิเศษสำหรับสมาชิกที่อัปเดตข้อมูลผู้ติดต่อ</div>
+  </div>
+
+  <div class="stage">
+    <div class="count-info">
+      <div class="info-chip" id="respondedCount">⏳ กำลังโหลดข้อมูล...</div>
+      <div class="info-chip" id="poolCount"></div>
+      <div class="info-chip warn">🚫 ยกเว้น: โอเชียนกลาส, ไบโอแลป</div>
+    </div>
+
+    <div class="reel-wrap">
+      <div class="reel-mask">
+        <div class="reel-center-line"></div>
+        <div id="reelTrack"></div>
+      </div>
+    </div>
+
+    <div class="timer-display" id="timerDisplay">⏱️ กำลังสุ่ม... 5.0 วินาที</div>
+
+    <div class="result-card" id="resultCard">
+      <div class="result-trophy">🏆</div>
+      <div class="result-label">ผู้โชคดีได้รับรางวัล</div>
+      <div class="result-name" id="resultCompany">—</div>
+      <div class="result-line" id="resultLine">💬 —</div>
+    </div>
+
+    <div class="controls">
+      <button class="btn-spin" id="btnSpin" onclick="startSpin()" disabled>กำลังโหลดข้อมูล...</button>
+      <button class="btn-reset" id="btnReset" onclick="resetAll()">🔄 สุ่มใหม่</button>
+    </div>
+  </div>
+
+  <div class="footer">ข้อมูล ณ วันที่ 15 มิถุนายน 2569 · ชมรมอุตสาหกรรมบางปู</div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBAtC1yDIxSonS183_G1ftw1evoL9JOFD4",
+  authDomain: "memberupdate-76635.firebaseapp.com",
+  databaseURL: "https://memberupdate-76635-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "memberupdate-76635",
+  storageBucket: "memberupdate-76635.appspot.com",
+  messagingSenderId: "memberupdate-76635",
+  appId: "memberupdate-76635"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const members = [
+  [1,"บริษัท กลุ่มสยามบรรจุภัณฑ์อุตสาหกรรม จำกัด"],
+  [2,"บริษัท โกลบอล ยูทิลิตี้ เซอร์วิส จำกัด"],
+  [3,"บริษัท โกลบอล เอ็นไวรอนเมนทอล เทคโนโลยี จำกัด"],
+  [4,"บริษัท โกลเบิล เคมีเคิล จำกัด"],
+  [5,"บริษัท คาลบี้ธนาวัธน์ จำกัด"],
+  [6,"บริษัท เคทีเค.97 ซับคอนแทรคเตอร์ จำกัด"],
+  [7,"บริษัท เคมแฟค จำกัด"],
+  [8,"บริษัท จีพีวี เอเชีย (ประเทศไทย) จำกัด"],
+  [9,"บริษัท เจพีไทย อาซาฮี อิเล็กทรอนิกส์ จำกัด"],
+  [10,"บริษัท ซันสตาร์ เคมีคัล (ประเทศไทย) จำกัด"],
+  [11,"บริษัท ซันสตาร์ เอ็นจิเนียริ่ง (ประเทศไทย) จำกัด"],
+  [12,"บริษัท ซูมิโตโม อิเล็คตริก วินเทค (ประเทศไทย) จำกัด"],
+  [13,"บริษัท เซ้าท์อีสต์เอเชี่ยน แพคเกจจิ่ง แอนด์ แคนนิ่ง จำกัด"],
+  [14,"บริษัท เดลต้า อีเลคโทรนิคส์ (ประเทศไทย) จำกัด (มหาชน)"],
+  [15,"บริษัท ไดอะโฆรม เคมีเคิล จำกัด"],
+  [16,"บริษัท ตะวันนาบรรจุภัณฑ์ จำกัด"],
+  [17,"บริษัท ตะวันออก ซินเทค จำกัด"],
+  [18,"บริษัท ถิรไทย จำกัด (มหาชน)"],
+  [19,"บริษัท ทีโรลิท โอลิมปัส จำกัด"],
+  [20,"บริษัท ที เอฟ ซี พลาสเทค จำกัด"],
+  [21,"บริษัท ไทย โกเบลโก้ เวลดิ้ง จำกัด"],
+  [22,"บริษัท ไทยเซเซน จำกัด"],
+  [23,"บริษัท ไทยนิสชิน เซฟุง จำกัด"],
+  [24,"บริษัท ไทยนิสชิน เทคโนมิค จำกัด"],
+  [25,"บริษัท ไทยปาร์คเกอร์ไรซิ่ง จำกัด"],
+  [26,"บริษัท ไทยฟิน จำกัด"],
+  [27,"บริษัท ไทยอินเตอร์เนชั่นแนล ไดเมคกิ้ง จำกัด"],
+  [28,"บริษัท ไทรอัมพ์ทรี จำกัด"],
+  [29,"บริษัท ไทยรีฟิรเจอเรชั่น คอมโพเน้นท์ จำกัด"],
+  [30,"บริษัท ไทยเอ็นเนอร์จี สโตเรจ เทคโนโลยี จำกัด (มหาชน)"],
+  [31,"บริษัท นาสโตะ (ประเทศไทย) จำกัด"],
+  [32,"บริษัท นิกโก คอร์ปอเรชั่น (ประเทศไทย) จำกัด"],
+  [33,"บริษัท บางปูเคมีเคิลส์ จำกัด"],
+  [34,"บริษัท บีเอเอสเอฟ (ไทย) จำกัด"],
+  [35,"บริษัท บี เอ็ม ที เอเชีย จำกัด"],
+  [36,"บริษัท ไบโอแลป จำกัด"],
+  [37,"บริษัท พาราเคมีภัณฑ์ จำกัด"],
+  [38,"บริษัท ฟูจิทัสโก้ จำกัด"],
+  [39,"บริษัท เฟลตัลอุตสาหกรรม จำกัด"],
+  [40,"บริษัท มัตซุย (เอเซีย) จำกัด"],
+  [41,"บริษัท มูราคามิ แอมพาส (ประเทศไทย) จำกัด"],
+  [42,"บริษัท เมก้าไลฟ์ไซแอนซ์ จำกัด (มหาชน)"],
+  [43,"บริษัท แมทเทล กรุงเทพ จำกัด"],
+  [44,"บริษัท ล่ำสูง (ประเทศไทย) จำกัด (มหาชน)"],
+  [45,"บริษัท วิวเทค เอเชีย จำกัด"],
+  [46,"บริษัท วิโนอา (ไทยแลนด์) จำกัด"],
+  [47,"บริษัท ศรีไทย มิยากาวา จำกัด"],
+  [48,"บริษัท ศรีไทยซุปเปอร์แวร์ จำกัด (มหาชน) สาขาบางปู"],
+  [49,"บริษัท ศรีไทยเดลี่ฟู้ดส์ จำกัด"],
+  [50,"สถาบันวิจัยวิทยาศาสตร์และเทคโนโลยี"],
+  [51,"บริษัท สยาม พีวีเอส เคมีคอลส์ จำกัด"],
+  [52,"บริษัท สยามทบพันแพคเกจจิ่ง จำกัด"],
+  [53,"บริษัท สาลี่คัลเล่อร์ จำกัด (มหาชน)"],
+  [54,"บริษัท หวาเหลี่ยง เซรามิค ฮาร์ดแวร์ แฟคโทรี่ จำกัด"],
+  [55,"บริษัท อมาล์เลียน เอ็นเตอร์ไพรส์ (ไทยแลนด์) จำกัด"],
+  [56,"บริษัท อิโต้ (ประเทศไทย) จำกัด"],
+  [57,"บริษัท อินฟุส เมดิคัล (ประเทศไทย) จำกัด"],
+  [58,"บริษัท อินเตอร์พรีทีฟ จำกัด"],
+  [59,"บริษัท อุตสาหกรรมกรดมะนาว จำกัด"],
+  [60,"บริษัท อูเอโน ไฟน์ เคมีคัลส์ อินดัสตรี (ประเทศไทย) จำกัด"],
+  [61,"บริษัท เอเซียไฟเบอร์ จำกัด (มหาชน)"],
+  [62,"บริษัท เอ็น เอช เค พรีซิชั่น (ประเทศไทย) จำกัด"],
+  [63,"บริษัท เอ็น เอช เค สปริง (ประเทศไทย) จำกัด"],
+  [64,"บริษัท เอ็ม.ซี.พลาสติก จำกัด"],
+  [65,"บริษัท แอ็พพลาย ดีบี จำกัด (มหาชน)"],
+  [66,"บริษัท แอมพาส อินดัสตรี จำกัด"],
+  [67,"บริษัท โอเชียนกลาส จำกัด (มหาชน)"],
+  [68,"บริษัท ไอ เอ ซี ซี เคมิคอล โซลูชั่นส์ จำกัด"],
+  [69,"บริษัท ไอ.พี.วัน จำกัด"],
+  [70,"บริษัท แอล ดี เอส เมทัล เวิร์ค จำกัด"],
+  [71,"บริษัท ฮะฮงสตีล จำกัด"],
+  [72,"บริษัท นิวบางปู แมนิวแฟคเจอริ่ง จำกัด"],
+  [73,"บริษัท ทีเอส โมลิเมอร์ จำกัด"],
+  [74,"บริษัท เอดีบี ซีแลนด์ จำกัด"],
+  [75,"บริษัท จินเป่า พรีซิชั่น อินดัสทรี่ จำกัด (สำนักงานใหญ่)"],
+  [76,"บริษัท จินเป่า พรีซิชั่น อินดัสทรี่ จำกัด (โรงงาน)"],
+  [77,"บริษัท สแตนดาร์ด แมนูแฟคเจอริ่ง จำกัด"],
+  [78,"บริษัท เนสท์เล่ ประเทศไทย จำกัด"],
+  [79,"บริษัท ศมลวรรณรุ่งเรืองกิจ จำกัด"],
+  [80,"บริษัท วีก้า บอลล์ แมนนูแฟคเจอริ่ง จำกัด"],
+  [81,"บริษัท เกรียงไกรรีไซเคิล จำกัด"],
+  [82,"โรงพยาบาลเปาโลสมุทรปราการ"],
+  [83,"บริษัท สมุทรเวชกิจ จำกัด"],
+  [84,"บริษัท ศิครินทร์ จำกัด (มหาชน)"],
+  [85,"บริษัท ดีไอซี สยามเคมีคอลอินดัสตรี้ จำกัด"],
+  [86,"บริษัท วินแชนซ์ อินดัสตรีส์ จำกัด"],
+  [87,"บริษัท เพ็ท ทรีทส์ จำกัด"],
+  [88,"บริษัท บียอนด์ เอจ จำกัด"],
+  [89,"บริษัท เคซีอี อีเลคโทรนิคส์ จำกัด (มหาชน)"],
+  [90,"บริษัท เอดีอี โซลูชั่น จำกัด"],
+  [91,"บริษัท มัลติเทค ฟู๊ด แมนูแฟคเจอริ่ง จำกัด"]
+];
+
+const EXCLUDE_KEYWORDS = ["โอเชียนกลาส", "ไบโอแลป", "ไบโอแลบ"];
+
+function isExcluded(name){
+  return EXCLUDE_KEYWORDS.some(kw => name.includes(kw));
+}
+
+function maskDisplay(str){
+  // Find any run of digits (optionally with -, spaces, parens) that is long enough to be a phone number
+  // and mask its middle portion, regardless of what other text surrounds it.
+  return str.replace(/(\+?\d[\d\-\s()]{6,}\d)/g, (match) => {
+    const digitsOnly = match.replace(/[^\d]/g, '');
+    if (digitsOnly.length < 8) return match; // too short to be a phone number, leave as-is
+    const head = digitsOnly.slice(0, 3);
+    const tail = digitsOnly.slice(-4);
+    return `${head}-xxx-${tail}`;
+  });
+}
+
+let eligiblePool = []; // each item: {num, name, line}
+let spinning = false;
+
+const ITEM_HEIGHT = 64;
+const SPIN_DURATION_MS = 5 * 1000;
+
+async function loadPool(){
+  const respondedEl = document.getElementById('respondedCount');
+  const countEl = document.getElementById('poolCount');
+  const btn = document.getElementById('btnSpin');
+
+  const timeoutPromise = new Promise((_, reject) =>
+    setTimeout(() => reject(new Error('timeout')), 8000)
+  );
+
+  let snap;
+  try {
+    snap = await Promise.race([get(ref(db, 'lineids')), timeoutPromise]);
+  } catch (err) {
+    console.error('Firebase load error:', err);
+    respondedEl.textContent = '❌ โหลดข้อมูลไม่สำเร็จ';
+    countEl.textContent = 'ตรวจสอบอินเทอร์เน็ต แล้วกดรีเฟรชหน้านี้ (F5)';
+    countEl.classList.add('warn');
+    btn.textContent = 'โหลดไม่สำเร็จ ลองรีเฟรช';
+    return;
+  }
+
+  const data = snap.val() || {};
+  let respondedCompanies = 0;
+  const peoplePool = [];
+
+  for (const [num, name] of members) {
+    const entry = data['m' + num];
+    const line1 = entry && entry.line1 && entry.line1.trim();
+    const line2 = entry && entry.line2 && entry.line2.trim();
+    const hasResponded = !!(line1 || line2);
+    if (!hasResponded) continue;
+    respondedCompanies++;
+    if (isExcluded(name)) continue;
+    if (line1) peoplePool.push({num, name, line: line1});
+    if (line2) peoplePool.push({num, name, line: line2});
+  }
+
+  eligiblePool = peoplePool;
+  respondedEl.textContent = `📋 ตอบแบบสอบถามแล้ว ${respondedCompanies} บริษัท`;
+
+  if (peoplePool.length === 0) {
+    countEl.textContent = '⚠️ ยังไม่มีผู้แทนที่มีสิทธิ์ลุ้นรางวัล';
+    countEl.classList.add('warn');
+    btn.textContent = 'ยังไม่มีรายชื่อให้สุ่ม';
+  } else {
+    countEl.textContent = `✅ ผู้แทนมีสิทธิ์ลุ้นรางวัล ${peoplePool.length} คน`;
+    btn.disabled = false;
+    btn.textContent = '🎰 เริ่มสุ่มรางวัล';
+  }
+  buildReel();
+}
+
+function buildReel(){
+  const track = document.getElementById('reelTrack');
+  track.innerHTML = '';
+  const display = eligiblePool.length ? eligiblePool : [{num:0,name:'รอข้อมูลสมาชิก...',line:''}];
+  const repeated = [];
+  for (let i=0;i<30;i++){
+    display.forEach(p => repeated.push(p));
+  }
+  repeated.forEach(p => {
+    const div = document.createElement('div');
+    div.className = 'reel-item';
+    const nameEl = document.createElement('div');
+    nameEl.className = 'r-name';
+    nameEl.textContent = p.name;
+    div.appendChild(nameEl);
+    if (p.line) {
+      const lineEl = document.createElement('div');
+      lineEl.className = 'r-line';
+      lineEl.textContent = '💬 ' + maskDisplay(p.line);
+      div.appendChild(lineEl);
+    }
+    track.appendChild(div);
+  });
+}
+
+function pickWinnerIndex(){
+  return Math.floor(Math.random() * eligiblePool.length);
+}
+
+window.startSpin = function(){
+  if (spinning || eligiblePool.length === 0) return;
+  spinning = true;
+  document.getElementById('resultCard').classList.remove('show');
+  document.getElementById('btnReset').classList.remove('show');
+  document.getElementById('btnSpin').disabled = true;
+  document.getElementById('btnSpin').textContent = '🎲 กำลังสุ่ม...';
+
+  const resultIndex = pickWinnerIndex();
+  const winner = eligiblePool[resultIndex];
+
+  const track = document.getElementById('reelTrack');
+  const totalItems = track.children.length;
+  const poolSize = eligiblePool.length;
+  const maskHeight = track.parentElement.clientHeight; // .reel-mask actual height
+
+  // Land deep into the repeated list (not the very last cycle, so it still looks like it travelled)
+  const landingCycle = 25; // out of 30 cycles built
+  const targetIndexInTrack = (landingCycle * poolSize) + resultIndex;
+
+  // We want the CENTER of the target item to sit at the CENTER of the mask.
+  // Item top position within track:
+  const itemTop = targetIndexInTrack * ITEM_HEIGHT;
+  const itemCenter = itemTop + (ITEM_HEIGHT / 2);
+  const maskCenter = maskHeight / 2;
+  const finalOffset = itemCenter - maskCenter;
+
+  track.style.transition = 'none';
+  track.style.transform = 'translateY(0px)';
+
+  void track.offsetHeight;
+
+  track.style.transition = `transform ${SPIN_DURATION_MS}ms cubic-bezier(0.12, 0.85, 0.1, 1)`;
+  track.style.transform = `translateY(-${finalOffset}px)`;
+
+  document.getElementById('timerDisplay').classList.add('show');
+  startTimer(SPIN_DURATION_MS);
+
+  setTimeout(() => {
+    revealWinner(winner);
+  }, SPIN_DURATION_MS + 200);
+};
+
+function startTimer(durationMs){
+  const display = document.getElementById('timerDisplay');
+  const endTime = Date.now() + durationMs;
+  function tick(){
+    const remain = Math.max(0, endTime - Date.now());
+    const secs = (remain / 1000).toFixed(1);
+    display.textContent = `⏱️ กำลังสุ่ม... ${secs} วินาที`;
+    if (remain > 0 && spinning) {
+      requestAnimationFrame(tick);
+    }
+  }
+  tick();
+}
+
+function revealWinner(winner){
+  spinning = false;
+  document.getElementById('timerDisplay').classList.remove('show');
+  document.getElementById('resultCompany').textContent = winner.name;
+  document.getElementById('resultLine').textContent = '💬 ' + maskDisplay(winner.line);
+  document.getElementById('resultCard').classList.add('show');
+  document.getElementById('btnReset').classList.add('show');
+  document.getElementById('btnSpin').style.display = 'none';
+  launchConfetti();
+}
+
+window.resetAll = function(){
+  document.getElementById('resultCard').classList.remove('show');
+  document.getElementById('btnReset').classList.remove('show');
+  document.getElementById('btnSpin').style.display = 'inline-block';
+  document.getElementById('btnSpin').disabled = eligiblePool.length === 0;
+  document.getElementById('btnSpin').textContent = '🎰 เริ่มสุ่มรางวัล';
+  const track = document.getElementById('reelTrack');
+  track.style.transition = 'none';
+  track.style.transform = 'translateY(0px)';
+  document.getElementById('confettiLayer').innerHTML = '';
+};
+
+function launchConfetti(){
+  const colors = ['#FF3CAC','#FF8A5B','#FFE259','#2ED9A3','#2E9FFF','#FF6B9D'];
+  const layer = document.getElementById('confettiLayer');
+  layer.innerHTML = '';
+  for (let i=0;i<150;i++){
+    const c = document.createElement('div');
+    c.className = 'confetti';
+    c.style.left = Math.random()*100 + 'vw';
+    c.style.background = colors[Math.floor(Math.random()*colors.length)];
+    c.style.width = (6 + Math.random()*9) + 'px';
+    c.style.height = c.style.width;
+    const duration = 3 + Math.random()*3;
+    const delay = Math.random()*1.5;
+    c.style.animation = `confettiFall ${duration}s ${delay}s ease-in forwards`;
+    layer.appendChild(c);
+  }
+  setTimeout(() => { layer.innerHTML = ''; }, 8000);
+}
+
+function initSparkles(){
+  const bg = document.getElementById('sparkleBg');
+  const icons = ['✨','🎊','⭐','🎉'];
+  for (let i=0;i<14;i++){
+    const s = document.createElement('div');
+    s.className = 'sparkle';
+    s.textContent = icons[Math.floor(Math.random()*icons.length)];
+    s.style.left = Math.random()*100 + 'vw';
+    s.style.top = Math.random()*100 + 'vh';
+    s.style.animationDelay = (Math.random()*5) + 's';
+    s.style.animationDuration = (5 + Math.random()*4) + 's';
+    bg.appendChild(s);
+  }
+}
+
+const styleSheet = document.createElement('style');
+styleSheet.textContent = `
+@keyframes confettiFall{
+  0%{transform:translateY(0) rotate(0deg);opacity:1;}
+  100%{transform:translateY(110vh) rotate(720deg);opacity:0;}
+}`;
+document.head.appendChild(styleSheet);
+
+initSparkles();
+loadPool();
+</script>
+</body>
+</html>
