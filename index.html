@@ -56,6 +56,9 @@
   .saving-badge{display:none;font-size:12px;color:#9BB3C6;margin-right:auto;align-self:center;}
   .status-bar{text-align:center;padding:8px;font-size:12px;color:#9BB3C6;border-top:0.5px solid #EDF3F8;}
 
+  .export-btn{flex-shrink:0;background:#1B3A5C;border:none;border-radius:8px;padding:9px 18px;font-size:13px;color:#fff;font-family:'Sarabun',sans-serif;font-weight:500;cursor:pointer;white-space:nowrap;transition:background .15s;display:inline-flex;align-items:center;gap:6px;}
+  .export-btn:hover{background:#142d47;}
+
   .qr-section{margin-top:2rem;padding:1.4rem 1.6rem;background:#fff;border:0.5px solid #C8DAEA;border-radius:14px;box-shadow:0 2px 12px rgba(27,58,92,.06);display:flex;gap:1.6rem;align-items:center;flex-wrap:wrap;}
   .qr-svg-wrap{flex-shrink:0;background:#fff;border-radius:10px;padding:10px;border:0.5px solid #C8DAEA;}
   .qr-info .qr-title{font-size:15px;font-weight:600;color:#1B3A5C;margin-bottom:6px;}
@@ -85,6 +88,7 @@
     <div class="search-wrap">
       <input type="text" id="searchInput" placeholder="🔍  ค้นหาชื่อบริษัท..." oninput="doFilter()">
     </div>
+    <button class="export-btn" onclick="openExportModal()">📥 Export Excel</button>
   </div>
   <div class="table-box">
     <div class="t-head">
@@ -127,15 +131,33 @@
     <div class="modal-actions">
       <span class="saving-badge" id="savingBadge">กำลังบันทึก...</span>
       <button class="btn-cancel" onclick="closeModal()">ยกเลิก</button>
-      <button class="btn-save" id="btnSave" onclick="saveLineIds()">บันทึก</button>
+  </div>
+</div>
+
+<!-- Export Password Modal -->
+<div class="modal-bg" id="exportModalBg">
+  <div class="modal">
+    <h3>🔒 Export ข้อมูล (เฉพาะแอดมิน)</h3>
+    <div class="co-name">กรุณาใส่รหัสผ่านแอดมินเพื่อดาวน์โหลดไฟล์ Excel</div>
+    <label>รหัสผ่าน</label>
+    <input type="password" id="exportPasswordInput" placeholder="กรอกรหัสผ่าน" onkeydown="if(event.key==='Enter') doExport()">
+    <p class="modal-hint" id="exportError" style="display:none;color:#E65100;">รหัสผ่านไม่ถูกต้อง</p>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeExportModal()">ยกเลิก</button>
+      <button class="btn-save" onclick="doExport()">ดาวน์โหลด Excel</button>
     </div>
   </div>
 </div>
+
+<!-- Excel Export Library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <!-- Firebase -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const ADMIN_PASSWORD = "BIS2026";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBAtC1yDIxSonS183_G1ftw1evoL9JOFD4",
@@ -296,7 +318,7 @@ document.getElementById('modalBg').addEventListener('click', function(e) {
 });
 
 document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') closeModal();
+  if (e.key === 'Escape') { closeModal(); closeExportModal(); }
 });
 
 function lineCell(num, field, label) {
@@ -326,6 +348,51 @@ function render(list) {
 window.doFilter = function() {
   const q = document.getElementById('searchInput').value.trim().toLowerCase();
   render(q ? members.filter(([,name]) => name.toLowerCase().includes(q)) : members);
+};
+
+window.openExportModal = function() {
+  document.getElementById('exportPasswordInput').value = '';
+  document.getElementById('exportError').style.display = 'none';
+  document.getElementById('exportModalBg').classList.add('open');
+  document.getElementById('exportPasswordInput').focus();
+};
+
+window.closeExportModal = function() {
+  document.getElementById('exportModalBg').classList.remove('open');
+};
+
+document.getElementById('exportModalBg').addEventListener('click', function(e) {
+  if (e.target === this) closeExportModal();
+});
+
+window.doExport = function() {
+  const pw = document.getElementById('exportPasswordInput').value;
+  if (pw !== ADMIN_PASSWORD) {
+    document.getElementById('exportError').style.display = 'block';
+    return;
+  }
+
+  const rows = [];
+  rows.push(['ลำดับ', 'บริษัท / องค์กร', 'ผู้ติดต่อ 1', 'ผู้ติดต่อ 2']);
+
+  for (const [num, name] of members) {
+    const data = lineData[mkKey(num)] || {};
+    const line1 = (data.line1 || '').trim();
+    const line2 = (data.line2 || '').trim();
+    if (!line1 && !line2) continue; // only companies that responded
+    rows.push([num, name, line1, line2]);
+  }
+
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols'] = [{wch:8}, {wch:50}, {wch:30}, {wch:30}];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'รายชื่อที่ตอบกลับ');
+
+  const today = new Date();
+  const dateStr = `${today.getFullYear()+543}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+  XLSX.writeFile(wb, `รายชื่อสมาชิกที่กรอกข้อมูล_${dateStr}.xlsx`);
+
+  closeExportModal();
 };
 
 doFilter();
